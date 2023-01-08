@@ -16,6 +16,12 @@ const tets = [
 ];
 let tet = tets[Math.floor(Math.random() * tets.length)];
 
+window.addEventListener('keydown', e=>{
+	e.code === 'ArrowDown' && canMove('down') && move('down');
+	e.code === 'ArrowLeft' && canMove('left') && move('left');
+    e.code === 'ArrowRight' && canMove('right') && move('right');
+});
+
 const setCoords = (t, p) =>
 t.map((r, i) => 
 	  r.map((c, j) => 
@@ -75,12 +81,28 @@ const canMove = (dir) => {
 		}
 		return !collided;
 	}
+	if(dir === 'left'){
+		let tempPos = {x:pos.x-1, y:pos.y};
+		let tempCoords = setCoords(tet,tempPos);
+		return !tempCoords.some(c =>
+			c.z && c.y >=0 && (c.x < 0 || wall.old[c.y][c.x] === 1)
+		);
+	}
+	if(dir === 'right'){
+		let tempPos = {x:pos.x+1, y:pos.y};
+		let tempCoords = setCoords(tet,tempPos);
+		return !tempCoords.some(c =>
+			c.z && c.y >=0 && (c.x > 9 || wall.old[c.y][c.x] === 1)
+		);
+	}
 	return true;	
 }
 
 const move = (dir) => {
 	removeFromWell(coords,wall.new);
 	if(dir == 'down') { pos.y += 1; }
+	if(dir == 'left') { pos.x -= 1; }
+	if(dir == 'right') { pos.x += 1; }
 	coords = setCoords(tet,pos);
 	placeOnWell(coords,wall.new);
 }
