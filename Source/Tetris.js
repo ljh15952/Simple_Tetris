@@ -16,8 +16,6 @@ const tets = [
 ];
 let tet = tets[Math.floor(Math.random() * tets.length)];
 
-
-
 const setCoords = (t, p) =>
 t.map((r, i) => 
 	  r.map((c, j) => 
@@ -64,6 +62,19 @@ const renderWall = () => {
 }
 
 const canMove = (dir) => {
+	if(dir === 'down'){
+		let tempPos = {x:pos.x, y:pos.y+1};
+		let tempCoords = setCoords(tet,tempPos);
+		let collided = tempCoords.some(c =>
+			c.z && c.y >= 0 && ( !wall.old[c.y] || wall.old[c.y][c.x] === 1)
+		);
+		if(collided){
+			pos = {x:5, y:-2};
+			placeOnWell(coords,wall.old);
+			tet = tets[Math.floor(Math.random() * tets.length)];
+		}
+		return !collided;
+	}
 	return true;	
 }
 
