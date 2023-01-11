@@ -12,7 +12,7 @@ const tets = [
   [['■', '■', '□'], ['■', '■', '□'], ['□', '□', '□']], 
   [['□', '■', '■'], ['■', '■', '□'], ['□', '□', '□']], 
   [['■', '■', '□'], ['□', '■', '■'], ['□', '□', '□']],
-  [['□', '□', '□', '□'], ['■', '■', '■', '■'], ['□', '□', '□', '□']], // I
+  [['□', '□', '□', '□'], ['■', '■', '■', '■'], ['□', '□', '□', '□'],['□', '□', '□', '□']]
 ];
 let tet = tets[Math.floor(Math.random() * tets.length)];
 
@@ -20,6 +20,7 @@ window.addEventListener('keydown', e=>{
 	e.code === 'ArrowDown' && canMove('down') && move('down');
 	e.code === 'ArrowLeft' && canMove('left') && move('left');
     e.code === 'ArrowRight' && canMove('right') && move('right');
+	e.code === 'ArrowUp' && canMove('rotate') && move();
 });
 
 const setCoords = (t, p) =>
@@ -68,6 +69,22 @@ const renderWall = () => {
 }
 
 const canMove = (dir) => {
+	if(dir === 'rotate'){
+		// 배열 회전 알고리즘
+		// matrix[j][size-i-1] = temp[i][j]
+		let tempTet = JSON.parse(JSON.stringify(tet));
+		let tetSize = tempTet[0].length;
+		tempTet.map((a,i)=>a.map((b,j)=>{
+			tempTet[j][tetSize-i-1] = tet[i][j];
+		}))
+		let tempCoords = setCoords(tempTet,pos);
+		let collided = tempCoords.some(c => c.z && c.y >= 0 && ((c.x < 0) || (c.x > 9) ||(wall.old[c.y][c.x] === 1)));
+		if(!collided){
+			tet = tempTet;
+			return true;
+		}
+		return false;
+	}
 	if(dir === 'down'){
 		let tempPos = {x:pos.x, y:pos.y+1};
 		let tempCoords = setCoords(tet,tempPos);
