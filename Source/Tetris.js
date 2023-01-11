@@ -70,8 +70,6 @@ const renderWall = () => {
 
 const canMove = (dir) => {
 	if(dir === 'rotate'){
-		// 배열 회전 알고리즘
-		// matrix[j][size-i-1] = temp[i][j]
 		let tempTet = JSON.parse(JSON.stringify(tet));
 		let tetSize = tempTet[0].length;
 		tempTet.map((a,i)=>a.map((b,j)=>{
@@ -92,6 +90,9 @@ const canMove = (dir) => {
 			pos = {x:5, y:-2};
 			placeOnWell(coords,wall.old);
 			tet = tets[Math.floor(Math.random() * tets.length)];
+			
+			clearFullRows();
+			removeFromWell(coords,wall.new);
 		}
 		return !collided;
 	}
@@ -111,6 +112,15 @@ const canMove = (dir) => {
 	}
 	return true;	
 }
+
+const clearFullRows = () =>{
+	wall.old = wall.old.reduce((acc, cur) => {
+		if(cur.every(c=> c === 1)){
+			return [Array(10).fill(0), ...acc];
+		}
+		return [...acc, cur];
+	}, []);
+};
 
 const move = (dir) => {
 	removeFromWell(coords,wall.new);
