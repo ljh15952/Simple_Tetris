@@ -1,9 +1,7 @@
 let canvas = document.getElementById('canvas');
 let cfx = canvas.getContext('2d')
-
 let wall = {new:Array(20).fill(0).map(()=>Array(10).fill(0)), 
 			old:Array(20).fill(0).map(()=>Array(10).fill(0))};
-
 let pos = {x:5,y:-2};
 const tets = [
   [['□', '■', '□'], ['■', '■', '■'], ['□', '□', '□']], 
@@ -15,38 +13,16 @@ const tets = [
   [['□', '□', '□', '□'], ['■', '■', '■', '■'], ['□', '□', '□', '□'],['□', '□', '□', '□']]
 ];
 let tet = tets[Math.floor(Math.random() * tets.length)];
-
 window.addEventListener('keydown', e=>{
 	e.code === 'ArrowDown' && canMove('down') && move('down');
 	e.code === 'ArrowLeft' && canMove('left') && move('left');
     e.code === 'ArrowRight' && canMove('right') && move('right');
 	e.code === 'ArrowUp' && canMove('rotate') && move();
 });
-
-const setCoords = (t, p) =>
-t.map((r, i) => 
-	  r.map((c, j) => 
-			({ x: p.x + j, y: p.y + i, z: c == '■' }))).reduce((acc,val)=>acc.concat(val), []);
-
+const setCoords = (t, p) => t.map((r, i) => r.map((c, j) => ({ x: p.x + j, y: p.y + i, z: c == '■' }))).reduce((acc,val)=>acc.concat(val), []);
+const placeOnWell = (c,w) => { c.forEach(b => { if(b.y >= 0 && b.z){ w[b.y][b.x] = 1; }});};
+const removeFromWell = (c,w) => {coords.forEach(b => {if(b.y >= 0 && b.z){w[b.y][b.x] = 0;}});};
 let coords = setCoords(tet,pos);
-
-const placeOnWell = (c,w) => {
-	c.forEach(b => {
-		if(b.y >= 0 && b.z){
-			w[b.y][b.x] = 1;
-		}
-	});
-};
-
-const removeFromWell = (c,w) => {
-	const ww = w;
-	coords.forEach(b => {
-		if(b.y >= 0 && b.z){
-			ww[b.y][b.x] = 0;
-		}
-	});
-};
-
 const renderWall = () => {
 	wall.old.map((a,i)=>{
 		a.map((b,j) => {
@@ -67,7 +43,6 @@ const renderWall = () => {
 			});
 	});
 }
-
 const canMove = (dir) => {
 	if(dir === 'rotate'){
 		let tempTet = JSON.parse(JSON.stringify(tet));
@@ -110,9 +85,7 @@ const canMove = (dir) => {
 			c.z && c.y >=0 && (c.x > 9 || wall.old[c.y][c.x] === 1)
 		);
 	}
-	return true;	
 }
-
 const clearFullRows = () =>{
 	wall.old = wall.old.reduce((acc, cur) => {
 		if(cur.every(c=> c === 1)){
@@ -121,7 +94,6 @@ const clearFullRows = () =>{
 		return [...acc, cur];
 	}, []);
 };
-
 const move = (dir) => {
 	removeFromWell(coords,wall.new);
 	if(dir == 'down') { pos.y += 1; }
@@ -130,7 +102,6 @@ const move = (dir) => {
 	coords = setCoords(tet,pos);
 	placeOnWell(coords,wall.new);
 }
-
 let before = Date.now();
 const update = () => {
 	let current = Date.now();
