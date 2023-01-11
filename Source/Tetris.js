@@ -79,11 +79,8 @@ const canMove = (dir) => {
 		}))
 		let tempCoords = setCoords(tempTet,pos);
 		let collided = tempCoords.some(c => c.z && c.y >= 0 && ((c.x < 0) || (c.x > 9) ||(wall.old[c.y][c.x] === 1)));
-		if(!collided){
-			tet = tempTet;
-			return true;
-		}
-		return false;
+		if(!collided) tet = tempTet;
+		return !collided;
 	}
 	if(dir === 'down'){
 		let tempPos = {x:pos.x, y:pos.y+1};
